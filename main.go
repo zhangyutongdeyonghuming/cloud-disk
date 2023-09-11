@@ -1,6 +1,7 @@
 package main
 
 import (
+	"cloud-disk/config"
 	"cloud-disk/db"
 	"cloud-disk/log"
 	"cloud-disk/router"
@@ -8,6 +9,7 @@ import (
 
 func main() {
 	log.InitLogger()
+	config.InitConfig()
 	db.InitDb()
 	router.InitRouter()
 }

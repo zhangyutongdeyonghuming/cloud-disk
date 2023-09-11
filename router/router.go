@@ -1,6 +1,7 @@
 package router
 
 import (
+	"cloud-disk/config"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -12,12 +13,11 @@ func InitRouter() {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
 	r.Use(gin.Recovery(), log())
-	err := r.Run()
-	if err != nil {
+	port := config.Cfg.Server.Port
+	if err := r.Run(":" + port); err != nil {
 		logrus.Error("web start error.", err)
 		return
 	}
-	logrus.Info("web started!")
 }
 
 // log gin请求日志记录
@@ -47,15 +47,14 @@ func log() gin.HandlerFunc {
 
 		// 请求IP
 		ip := c.ClientIP()
-
+		data := map[string]interface{}{
+			"latencyTime": latencyTime,
+			"method":      method,
+			"uri":         uri,
+			"status":      status,
+			"ip":          ip,
+		}
 		// 日志格式
-		logrus.WithFields(
-			logrus.Fields{
-				"latencyTime": latencyTime,
-				"method":      method,
-				"uri":         uri,
-				"status":      status,
-				"ip":          ip,
-			}).Info()
+		logrus.WithField("data", data).Info()
 	}
 }
